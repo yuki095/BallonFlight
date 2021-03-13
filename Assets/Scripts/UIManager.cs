@@ -22,6 +22,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Transform canvasTran;
 
+    [SerializeField]
+    private Button btnInfo;
 
     [SerializeField]
     private Button btnTitle;
@@ -55,6 +57,8 @@ public class UIManager : MonoBehaviour
         // 文字列をアニメーションさせて表示
         txtInfo.DOText("Game Over...", 1.0f);
 
+        btnInfo.onClick.AddListener(RestartGame);
+
     }
 
     /// <summary>
@@ -67,6 +71,21 @@ public class UIManager : MonoBehaviour
 
         // ResultPopUpの設定を行う
         resultPopUp.SetUpResultPopUp(score);
+    }
+
+    public void RestartGame()
+    {
+        //ボタンからメソッドを削除（重複クリック防止）
+        btnInfo.onClick.RemoveAllListeners();
+        //現在のシーンの名前を取得
+        //string sceneName = SceneManager.GetActiveScene().name;
+
+        //canvasGroupInfo.DOFade(0f, 1.0f)
+        //    .OnComplete(() =>
+        //    {
+        //        Debug.Log("Restart");
+        //        SceneMagager.LoadScene(sceneName);
+        //    });
     }
 
     private void Start()

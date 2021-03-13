@@ -14,6 +14,9 @@ public class GameDirector : MonoBehaviour
     private FloorGenerator[] floorGenerators;    // floorGeneratorスクリプトのアタッチされているゲームオブジェクトをアサイン
 
     [SerializeField]
+    private RandomObjectGenerator[] randomObjectGenerators; 
+
+    [SerializeField]
     private RandomObjectGenerator[] ramdomObjectGenerator;
 
     [SerializeField]
@@ -63,8 +66,8 @@ public class GameDirector : MonoBehaviour
         // FloorGeneratorの準備
         SetUpFloorGenerators();
 
-        // TODO 各ジェネレータを停止
-        Debug.Log("生成停止");
+        // 各ジェネレータを停止
+        StopGenerators();
     }
 
     /// <summary>
@@ -87,9 +90,8 @@ public class GameDirector : MonoBehaviour
             // 準備完了
             isSetUp = true;
 
-            Debug.Log("生成スタート");
             // 各ジェネレータの生成をスタート
-            // ActivateGenerators();
+            ActivateGenerators();
 
             //タイトル曲終了、メイン曲再生
             StartCoroutine(audioManager.PlayBGM(1));
@@ -104,8 +106,8 @@ public class GameDirector : MonoBehaviour
         // ゴール地点を生成
         GoalChecker goalHouse = Instantiate(goalHousePrefab);
 
-        // TODO ゴール地点の初期設定
-        Debug.Log("ゴール地点 生成");
+        // ゴール地点の初期設定
+        goalHouse.SetUpGoalHouse(this);
     }
 
     /// <summary>
@@ -116,8 +118,45 @@ public class GameDirector : MonoBehaviour
         // ゲーム終了
         isGameUp = true;
 
-        Debug.Log("生成停止");
         // 各ジェネレータの生成を停止
-        // StopGenerators();
+        StopGenerators();
+    }
+
+    /// <summary>
+    /// 各ジェネレータを停止する
+    /// </summary>
+    private void StopGenerators()
+    {
+        for (int i = 0; i < randomObjectGenerators.Length; i++)
+        {
+            randomObjectGenerators[i].SwitchActivation(false);
+        }
+
+        for (int i = 0; i < floorGenerators.Length; i++)
+        {
+            floorGenerators[i].SwitchActivation(false);
+        }
+    }
+
+    /// <summary>
+    /// 各ジェネレータを動かし始める
+    /// </summary>
+    private void ActivateGenerators()
+    {
+        for (int i = 0; i < randomObjectGenerators.Length; i++)
+        {
+            randomObjectGenerators[i].SwitchActivation(true);
+        }
+
+        for (int i = 0; i < floorGenerators.Length; i++)
+        {
+            floorGenerators[i].SwitchActivation(true);
+        }
+    }
+
+    public void GoalClear()
+    {
+        //クリア曲再生
+        StartCoroutine(audioManager.PlayBGM(2));
     }
 }

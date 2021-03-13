@@ -46,6 +46,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private StartChecker startChecker;
 
+    [SerializeField]
+    private AudioClip knockbackSE;  //敵と接触したSE用のオーディオファイルをアサイン
+
+    [SerializeField]
+    private GameObject knockbackEffectPrefab;  //敵と接触したエフェクト用のプレファブをアサイン
+
+    [SerializeField]
+    private AudioClip coinSE;  //コインSE
+
+    [SerializeField]
+    private GameObject coinEffectPrefab; // コインエフェクト
+
+    [SerializeField]
+    private Joystick joystick;  //FloatingJoystickゲームオブジェクトにアタッチされているFloatingJoystickスクリプトをアサイン
+
+    [SerializeField]
+    private Button btnJump;  //btnJumpゲームオブジェクトにアタッチされているButtonコンポーネント
+
+    [SerializeField]
+    private Button btnDetach;  //btnDetachOrGenerateゲームオブジェクトにアタッチされているButtonコンポーネント
+
+    private int ballonCount;
+
     void Start()
     {
         //コンポーネントを取得して変数に代入
@@ -55,6 +78,10 @@ public class PlayerController : MonoBehaviour
 
         //配列の初期化（バルーンの最大生成数だけ配列の要素数を用意する）
         ballons = new GameObject[maxBallonCount];
+
+        // 
+        btnJump.onClick.AddListener(OnClickJump);
+        btnDetach.onClick.AddListener(OnClickDetachOrGenerate);
     }
 
     void Update()
@@ -133,8 +160,13 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void Move()
     {
+#if UNITY_EDITOR
         //水平方向への入力受付
         float x = Input.GetAxis(horizontal);
+        x = joystick.Horizontal;
+#else
+        float x = joystick.Horizontal;
+#endif
 
         //xの値が0でない場合（キー入力がある場合）
         if (x != 0)
@@ -239,12 +271,21 @@ public class PlayerController : MonoBehaviour
         // 接触したコライダーを持つゲームオブジェクトのTagがEnemyなら 
         if (col.gameObject.tag == "Enemy")
         {
-
             // キャラと敵の位置から距離と方向を計算して、direction変数に代入
             Vector3 direction = (transform.position - col.transform.position).normalized;   // 正規化？
 
             // 敵の反対側にキャラを吹き飛ばす
             transform.position += direction * knockbackPower;
+
+            // 敵との接触用のSEを再生
+            AudioSource.PlayClipAtPoint(knockbackSE, transform.position);
+
+            // 接触用のエフェクトを、敵の位置にクローンとして生成
+            // 生成されたゲームオブジェクトを変数へ代入
+            GameObject knockbackEffect = Instantiate(knockbackEffectPrefab, col.transform.position, Quaternion.identity);
+
+            // エフェクトを0.5秒後に破棄
+            Destroy(knockbackEffect, 0.5f);
         }
     }
 
@@ -272,8 +313,6 @@ public class PlayerController : MonoBehaviour
 
         if (col.gameObject.tag == "Coin")
         {
-            Debug.Log("通過");
-
             // コインの持つCoinスクリプトを取得し、point変数の値をcoinPoint変数に加算
             coinPoint += col.gameObject.GetComponent<Coin>().point;
 
@@ -281,6 +320,16 @@ public class PlayerController : MonoBehaviour
             Destroy(col.gameObject);
 
             uiManager.UpdateDisplayScore(coinPoint);
+
+            // コイン接触用のSEを再生
+            AudioSource.PlayClipAtPoint(coinSE, transform.position);
+
+            // 接触用のエフェクトをコインの位置にクローンとして生成
+            // 生成されたゲームオブジェクトを変数へ代入
+            GameObject coinEffect = Instantiate(coinEffectPrefab, col.transform.position, Quaternion.identity);
+
+            // エフェクトを0.5秒後に破棄
+            Destroy(coinEffect, 0.5f);
         }
     }
 
@@ -296,6 +345,31 @@ public class PlayerController : MonoBehaviour
 
         // ゲームオーバー表示
         uiManager.DisplayGameOverInfo();
+    }
+
+    /// <summary>
+    /// ジャンプボタンを押した際の処理
+    /// </summary>
+    private void OnClickJump()
+    {
+        // バルーンが１つ以上あるなら
+        if (ballonCount > 0)
+        {
+            Jump();
+        }
+    }
+
+    /// <summary>
+    /// バルーン生成ボタンを押した際の処理
+    /// </summary>
+    private void OnClickDetachOrGenerate()
+    {
+        // 地面に接地していて、バルーンが２個以下の場合
+        if (isGrounded == true && ballonCount < maxBallonCount && isGenerating == false)
+        {
+            // バルーンの生成中でなければ、バルーンを１つ作成する
+            StartCoroutine(GenerateBallon(1, generateTime));
+        }
     }
 
 }

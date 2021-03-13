@@ -19,8 +19,15 @@ public class FloorGenerator : MonoBehaviour
     [SerializeField]
     private GameDirector gameDirector;
 
+    private bool isActive;   // Trueなら生成し、Falseなら生成しない
+
     void Update()
     {
+        // 停止中は生成しない
+        if (isActive == false)
+        {
+            return;
+        }
 
         // 時間を計測する
         timer += Time.deltaTime;
@@ -64,8 +71,15 @@ public class FloorGenerator : MonoBehaviour
         this.gameDirector = gameDirector;
         Debug.Log(gameDirector);
 
-        // TODO 他にも初期設定したい情報がある場合にはここに処理を追加する
-
     }
 
+    /// <summary>
+    /// 生成状態のオン／オフ切り替え
+    /// </summary>
+    /// <param name="isSwitch"></param>
+     public void SwitchActivation(bool isSwitch)
+        {
+            isActive = isSwitch;
+        }
+    
 }

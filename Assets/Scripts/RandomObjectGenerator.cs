@@ -11,9 +11,12 @@ public class RandomObjectGenerator : MonoBehaviour
     private Transform generateTran;
 
     [Header("生成までの待機時間")]
-    public Vector2 waitTimeRange;         // １回生成するまでの待機時間
+    public Vector2 waitTimeRange;  // １回生成するまでの待機時間
     private float waitTime;
-    private float timer;                  // 待機時間の計測用タイマー
+    private float timer;        　　// 待機時間の計測用タイマー
+
+    private bool isActive;　　　　　//　Trueなら生成し、Falseなら生成しない
+    private GameDirector gameDirector;
 
     void Start()
     {
@@ -31,6 +34,12 @@ public class RandomObjectGenerator : MonoBehaviour
 
     void Update()
     {
+        // 停止中（スタート前）は生成中を行わない
+        if (isActive == false)
+        {
+            return;
+        }
+
         // 計測用タイマーを加算
         timer += Time.deltaTime;
 
@@ -64,5 +73,14 @@ public class RandomObjectGenerator : MonoBehaviour
 
         // 次の生成までの時間をセットする
         SetGenerateTime();
+    }
+
+    /// <summary>
+    /// 生成状態のオン／オフ切り替え
+    /// </summary>
+    /// <param name="isSwitch"></param>
+    public void SwitchActivation(bool isSwitch)
+    {
+        isActive = isSwitch;
     }
 }
