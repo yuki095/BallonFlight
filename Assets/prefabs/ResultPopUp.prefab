@@ -670,7 +670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fe0aadc661434b6a8d8a072f76a8074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  txtScore: {fileID: 0}
+  txtScore: {fileID: 4848726488458280070}
   canvasGroup: {fileID: 4848726489647452993}
   canvasGroupRestart: {fileID: 4848726488493357965}
   btnTitle: {fileID: 4848726488421984455}

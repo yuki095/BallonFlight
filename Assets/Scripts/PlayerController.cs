@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -163,7 +164,7 @@ public class PlayerController : MonoBehaviour
 #if UNITY_EDITOR
         //水平方向への入力受付
         float x = Input.GetAxis(horizontal);
-        x = joystick.Horizontal;
+        //x = joystick.Horizontal;
 #else
         float x = joystick.Horizontal;
 #endif
@@ -368,7 +369,7 @@ public class PlayerController : MonoBehaviour
         if (isGrounded == true && ballonCount < maxBallonCount && isGenerating == false)
         {
             // バルーンの生成中でなければ、バルーンを１つ作成する
-            StartCoroutine(GenerateBallon(1, generateTime));
+            StartCoroutine(GenerateBallon());
         }
     }
 

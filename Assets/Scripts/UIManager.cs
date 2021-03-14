@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -78,14 +79,14 @@ public class UIManager : MonoBehaviour
         //ボタンからメソッドを削除（重複クリック防止）
         btnInfo.onClick.RemoveAllListeners();
         //現在のシーンの名前を取得
-        //string sceneName = SceneManager.GetActiveScene().name;
+        string sceneName = SceneManager.GetActiveScene().name;
 
-        //canvasGroupInfo.DOFade(0f, 1.0f)
-        //    .OnComplete(() =>
-        //    {
-        //        Debug.Log("Restart");
-        //        SceneMagager.LoadScene(sceneName);
-        //    });
+        canvasGroupInfo.DOFade(0f, 1.0f)
+            .OnComplete(() =>
+            {
+                Debug.Log("Restart");
+                SceneManager.LoadScene(sceneName);
+            });
     }
 
     private void Start()

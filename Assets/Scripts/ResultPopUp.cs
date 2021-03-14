@@ -25,6 +25,7 @@ public class ResultPopUp : MonoBehaviour
     /// <param name="score"></param>
     public void SetUpResultPopUp(int score)
     {
+        Debug.Log("score"+ score);
         // 透明にする
         canvasGroup.alpha = 0;
         // 徐々にResultPopUpを表示
